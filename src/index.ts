@@ -1,37 +1,49 @@
-import { Hono } from 'hono'
-import { cors } from 'hono/cors'
-import type { Env } from './types'
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import type { Env } from "./types/Env";
+import type { Message } from "./types/message";
+import { chat } from "./llm/groq_client";
 
-const app = new Hono<{ Bindings: Env }>()
+import pino from "pino";
 
-app.use('/*', cors())
+export const logger = pino({
+  level: "info",
+  transport: {
+    target: "pino-pretty", // For development
+    options: { colorize: true },
+  },
+});
 
-app.get('/', (c) => {
-  return c.json({ message: 'Welcome to Vivarium API' })
-})
+const app = new Hono<{ Bindings: Env }>();
 
-app.get('/health', (c) => {
-  return c.json({ status: 'healthy' })
-})
+app.use("/*", cors());
+
+app.get("/", (c) => {
+  return c.json({ message: "Welcome to Vivarium API" });
+});
+
+app.get("/health", (c) => {
+  return c.json({ status: "healthy" });
+});
 
 // AI endpoint example
-app.post('/api/chat', async (c) => {
+app.post("/api/chat", async (c) => {
   try {
-    const { message } = await c.req.json()
-
-    if (!message) {
-      return c.json({ error: 'Message is required' }, 400)
+    const messageObj: Message = await c.req.json();
+    logger.info(`received chat message: ${messageObj.modelMessage.content}`);
+    if (!messageObj.modelMessage.content) {
+      return c.json({ error: "Message is required" }, 400);
     }
 
-    // TODO: Implement AI SDK integration with Cloudflare AI
-    // Example placeholder response
-    return c.json({
-      response: 'AI integration coming soon',
-      message: message,
-    })
-  } catch (error) {
-    return c.json({ error: 'Internal server error' }, 500)
-  }
-})
+    const ai_response = await chat(messageObj, c.env);
 
-export default app
+    return c.json({
+      response: ai_response,
+    });
+  } catch (error) {
+    logger.error({ error }, "Chat endpoint error");
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+export default app;
