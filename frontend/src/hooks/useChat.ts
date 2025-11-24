@@ -1,51 +1,57 @@
-import { useState } from 'react'
-import { Message } from '../types/message'
-import { sendChatMessage } from '../services/chatApi'
+import { useState } from "react";
+import { Message } from "../types/message";
+import { sendChatMessage } from "../services/chatApi";
 
 export function useChat() {
-  const [messages, setMessages] = useState<Message[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async (text: string) => {
-    if (!text.trim() || isLoading) return
+    if (!text.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      text,
-      sender: 'user',
+      modelMessage: {
+        role: "user",
+        content: text,
+      },
       timestamp: new Date(),
-    }
+    };
 
-    setMessages((prev) => [...prev, userMessage])
-    setIsLoading(true)
+    setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
 
     try {
-      const responseText = await sendChatMessage(text)
+      const responseText = await sendChatMessage(text);
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: responseText,
-        sender: 'assistant',
+        modelMessage: {
+          role: "assistant",
+          content: responseText,
+        },
         timestamp: new Date(),
-      }
+      };
 
-      setMessages((prev) => [...prev, assistantMessage])
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: `Error: ${error instanceof Error ? error.message : 'Failed to send message'}`,
-        sender: 'assistant',
+        modelMessage: {
+          role: "assistant",
+          content: `Error: ${error instanceof Error ? error.message : "Failed to send message"}`,
+        },
         timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, errorMessage])
+      };
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return {
     messages,
     isLoading,
     sendMessage,
-  }
+  };
 }

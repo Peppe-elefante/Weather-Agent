@@ -1,7 +1,7 @@
 export function ChatHeader() {
   return (
     <header>
-      <h1>Vivarium Chat</h1>
+      <h1>Weather Chat</h1>
     </header>
-  )
+  );
 }
