@@ -1,9 +1,10 @@
 import { createGroq } from "@ai-sdk/groq";
-import { generateText, ModelMessage } from "ai";
+import { generateText, stepCountIs } from "ai";
 import { Message } from "../types/message";
 import { logger } from "../index";
 import type { Env } from "../types/Env";
 import { WEATHER_PROMPT } from "../utils/system_prompts";
+import { weatherTool } from "../utils/tools";
 
 export const createGroqClient = (env: Env) => {
   return createGroq({
@@ -20,18 +21,14 @@ export const chat = async (message: Message, env: Env) => {
     let messages_prompt = WEATHER_PROMPT.concat(message.modelMessage);
 
     const result = await generateText({
-      model: groq("qwen/qwen3-32b"),
+      model: groq("llama-3.1-8b-instant"),
       messages: messages_prompt,
-      providerOptions: {
-        groq: {
-          reasoningEffort: "none",
-        },
+      tools: {
+        weatherTool: weatherTool,
       },
+      stopWhen: stepCountIs(5),
     });
-
-    logger.info(
-      `Chat response generated successfully for message: ${message.id}`,
-    );
+    logger.info(`received chat message: ${JSON.stringify(result)}`);
     return result.text;
   } catch (error) {
     logger.error({ error }, "Error generating chat response");
