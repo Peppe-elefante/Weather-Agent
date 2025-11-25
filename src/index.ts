@@ -18,27 +18,41 @@ const app = new Hono<{ Bindings: Env }>();
 
 app.use("/*", cors());
 
-app.get("/", (c) => {
-  return c.json({ message: "Welcome to Vivarium API" });
-});
-
-app.get("/health", (c) => {
-  return c.json({ status: "healthy" });
-});
+export const conversations = new Map<string, Message[]>();
 
 // AI endpoint example
 app.post("/api/chat", async (c) => {
   try {
-    const messageObj: Message = await c.req.json();
-    logger.info(`received chat message: ${messageObj.modelMessage.content}`);
-    if (!messageObj.modelMessage.content) {
+    const {
+      messageObj,
+      sessionId,
+    }: { messageObj: Message; sessionId: string } = await c.req.json();
+
+    if (!messageObj?.modelMessage?.content) {
       return c.json({ error: "Message is required" }, 400);
     }
 
-    const ai_response = await chat(messageObj, c.env);
+    logger.info(`received chat message: ${messageObj.modelMessage.content}`);
+
+    const history = conversations.get(sessionId) || [];
+    history.push(messageObj);
+
+    const ai_response = await chat(history, c.env);
+
+    for (const message of ai_response.messages) {
+      if (message.role !== "user") {
+        history.push({
+          id: messageObj.id,
+          modelMessage: message,
+          timestamp: new Date(),
+        });
+      }
+    }
+
+    conversations.set(sessionId, history);
 
     return c.json({
-      response: ai_response,
+      response: ai_response.text,
     });
   } catch (error) {
     logger.error({ error }, "Chat endpoint error");

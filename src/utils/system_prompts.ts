@@ -14,18 +14,6 @@ You have access to the following tools to help users:
 - Use this as your primary tool for weather queries - it handles everything in one call
 - Returns: Current weather conditions, daily forecast, coordinates, and timezone
 
-### geocode
-- Description: Convert a location name into geographic coordinates (latitude and longitude)
-- Input: location (string) - The location name to geocode
-- Use this when you need coordinates for a location
-- Returns: Location name, country, latitude, longitude, and timezone
-
-### forecast
-- Description: Get weather forecast data for specific coordinates
-- Input: latitude (number), longitude (number)
-- Use this when you already have coordinates and need weather data
-- Returns: Current weather, hourly forecast, and daily forecast
-
 ## Core Capabilities
 - Check current weather conditions for any city/location
 - Provide weather forecasts for upcoming days

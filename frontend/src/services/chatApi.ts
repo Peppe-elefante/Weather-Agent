@@ -15,13 +15,19 @@ export async function sendChatMessage(text: string): Promise<string> {
     modelMessage: modelMessage,
     timestamp: new Date(),
   };
-  console.log(JSON.stringify(message));
+
+  const payload = {
+    messageObj: message,
+    sessionId: "default-session",
+  };
+
+  console.log(JSON.stringify(payload));
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(message),
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
