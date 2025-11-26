@@ -17,25 +17,24 @@ export interface ChatResult {
   messages: ModelMessage[];
 }
 
-export const chat = async (message_history: Message[], env: Env): Promise<ChatResult> => {
+export const chat = async (
+  message_history: Message[],
+  env: Env,
+): Promise<ChatResult> => {
   const groq = createGroqClient(env);
 
   try {
     logger.info(`Processing chat message: ${message_history?.at(-1)?.id}`);
 
-    logger.info(`messages_history: ${JSON.stringify(message_history)}`);
-
     let messages_prompt = WEATHER_PROMPT.concat(
       message_history.map((m) => m.modelMessage),
     );
-
-    //logger.info(`messages_prompt: ${JSON.stringify(messages_prompt)}`);
 
     const result = await generateText({
       model: groq("llama-3.1-8b-instant"),
       messages: messages_prompt,
       tools: {
-        weatherTool: weatherTool,
+        weatherTool,
       },
       stopWhen: stepCountIs(5),
     });
@@ -43,7 +42,6 @@ export const chat = async (message_history: Message[], env: Env): Promise<ChatRe
     logger.info(`received AI response message: ${JSON.stringify(result.text)}`);
     logger.info(`response steps count: ${result.response.messages.length}`);
 
-    // Return both the final text and all the messages (including tool calls/results)
     return {
       text: result.text,
       messages: result.response.messages,

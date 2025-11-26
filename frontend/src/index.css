@@ -66,7 +66,8 @@ header h1 {
   overflow-y: auto;
   margin-bottom: 1rem;
   padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: #2d2d2d;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -108,17 +109,21 @@ header h1 {
 
 .message-content {
   max-width: 70%;
+  color: #242424;
   padding: 1rem 1.25rem;
   border-radius: 12px;
   background-color: rgba(255, 255, 255, 0.05);
+  box-shadow:
+    rgba(0, 0, 0, 0.12) 0px 1px 3px,
+    rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }
 
 .message-user .message-content {
-  background-color: #646cff;
+  background-color: #db3069;
 }
 
 .message-assistant .message-content {
-  background-color: #97dc18;
+  background-color: #f5d547;
 }
 
 .message-sender {
@@ -151,6 +156,7 @@ header h1 {
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   color: inherit;
   font-size: 1em;
   font-family: inherit;
@@ -161,7 +167,7 @@ header h1 {
 
 .chat-input:focus {
   outline: none;
-  border-color: #646cff;
+  border-color: #db3069;
   background-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -177,7 +183,7 @@ header h1 {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #646cff;
+  background-color: #db3069;
   color: white;
   cursor: pointer;
   transition:
@@ -186,7 +192,7 @@ header h1 {
 }
 
 .send-button:hover:not(:disabled) {
-  background-color: #535bf2;
+  background-color: #db3069;
 }
 
 .send-button:disabled {
@@ -206,7 +212,7 @@ header h1 {
 button {
   border-radius: 8px;
   border: 1px solid transparent;
-  border-color: #959bff;
+  border-color: #db3069;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
@@ -217,7 +223,7 @@ button {
 }
 
 button:hover {
-  border-color: #646cff;
+  border-color: #db3069;
 }
 
 button:focus,
@@ -239,7 +245,7 @@ code {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
+    color: #1446a0;
     background-color: #ffffff;
   }
   button {

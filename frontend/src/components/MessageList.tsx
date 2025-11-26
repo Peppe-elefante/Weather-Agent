@@ -1,7 +1,8 @@
 import { useRef, useEffect } from "react";
 import { Message } from "../types/message";
 import { EmptyState } from "./EmptyState";
-import { ModelMessage } from "ai";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRobot, faUser } from "@fortawesome/free-solid-svg-icons";
 
 interface MessageListProps {
   messages: Message[];
@@ -31,7 +32,15 @@ export function MessageList({ messages }: MessageListProps) {
         >
           <div className="message-content">
             <div className="message-sender">
-              {message.modelMessage.role === "user" ? "You" : "Assistant"}
+              {message.modelMessage.role === "user" ? (
+                <>
+                  User <FontAwesomeIcon icon={faUser} />
+                </>
+              ) : (
+                <>
+                  Assistant <FontAwesomeIcon icon={faRobot} />
+                </>
+              )}
             </div>
             <div className="message-text">
               {message.modelMessage.content as String}
