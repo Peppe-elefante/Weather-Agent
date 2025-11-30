@@ -77,7 +77,34 @@ npm install
 cd ..
 ```
 
-### Step 3: Configure Cloudflare Wrangler
+### Step 3: Configure Environment Variables
+
+#### Backend (Required)
+
+Set up your Groq API key for AI functionality:
+
+```bash
+npx wrangler secret put GROQ_API_KEY
+```
+
+When prompted, paste your Groq API key. You can get a free API key from [console.groq.com](https://console.groq.com).
+
+#### Frontend (Optional)
+
+The frontend uses environment variables for API configuration. For development, the defaults work out of the box. For production deployment:
+
+1. Copy the example environment file:
+```bash
+cd frontend
+cp .env.example .env
+```
+
+2. Edit `.env` and set your production API URL:
+```
+VITE_API_URL=https://your-worker-name.your-subdomain.workers.dev
+```
+
+### Step 4: Configure Cloudflare Wrangler
 
 1. **Login to Cloudflare:**
 
@@ -97,7 +124,7 @@ This will open a browser window to authenticate with your Cloudflare account.
 3. **Optional - Update your worker name:**
    Edit [wrangler.toml](wrangler.toml) if you want to change the worker name from `weather-agent` to something else.
 
-### Step 4: Development Setup
+### Step 5: Development Setup
 
 #### Option 1: Run Everything Together (Recommended)
 
@@ -126,27 +153,12 @@ Run frontend only (in a separate terminal):
 npm run dev:frontend
 ```
 
-### Step 5: Verify Installation
+### Step 6: Verify Installation
 
 1. Open your browser and navigate to `http://localhost:5173`
 2. You should see the weather agent frontend interface
 3. The backend API will be accessible at `http://localhost:8787`
-
-### Step 6: Configure AI Models (Optional)
-
-The application supports multiple AI providers. To use them:
-
-1. **Groq API** (for fast inference):
-   - Get an API key from [console.groq.com](https://console.groq.com)
-   - Add to Wrangler secrets: `npx wrangler secret put GROQ_API_KEY`
-
-2. **OpenAI API**:
-   - Get an API key from [platform.openai.com](https://platform.openai.com)
-   - Add to Wrangler secrets: `npx wrangler secret put OPENAI_API_KEY`
-
-3. **Cloudflare Workers AI** (default):
-   - Already configured via the `[ai]` binding in [wrangler.toml](wrangler.toml)
-   - No additional setup required
+4. Try asking about the weather in any city (e.g., "What's the weather in London?")
 
 ### Building for Production
 

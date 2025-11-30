@@ -1,9 +1,28 @@
 import { Message } from "../types/message";
-const API_URL = "http://localhost:8787/api/chat";
-const CLEAR_API_URL = "http://localhost:8787/api/clear-chat";
+
+// Use environment variable for API URL with fallback to localhost for development
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8787";
+const API_URL = `${API_BASE_URL}/api/chat`;
+const CLEAR_API_URL = `${API_BASE_URL}/api/clear-chat`;
 
 export interface ChatApiResponse {
   response: string;
+}
+
+/**
+ * Get or create a unique session ID for the current user
+ * Session ID is stored in localStorage to persist across page refreshes
+ */
+function getOrCreateSessionId(): string {
+  const SESSION_KEY = "weather-agent-session-id";
+  let sessionId = localStorage.getItem(SESSION_KEY);
+
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem(SESSION_KEY, sessionId);
+  }
+
+  return sessionId;
 }
 
 export async function sendChatMessage(text: string): Promise<string> {
@@ -18,7 +37,7 @@ export async function sendChatMessage(text: string): Promise<string> {
 
   const payload = {
     messageObj: message,
-    sessionId: "default-session",
+    sessionId: getOrCreateSessionId(),
   };
 
   console.log(JSON.stringify(payload));
@@ -40,7 +59,7 @@ export async function sendChatMessage(text: string): Promise<string> {
 
 export async function clearChat(): Promise<void> {
   const payload = {
-    sessionId: "default-session",
+    sessionId: getOrCreateSessionId(),
   };
 
   const response = await fetch(CLEAR_API_URL, {
