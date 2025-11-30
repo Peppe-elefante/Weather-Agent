@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Message } from "../types/message";
-import { sendChatMessage } from "../services/chatApi";
+import { sendChatMessage, clearChat as clearChatApi } from "../services/chatApi";
 
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -49,9 +49,19 @@ export function useChat() {
     }
   };
 
+  const clearChat = async () => {
+    try {
+      await clearChatApi();
+      setMessages([]);
+    } catch (error) {
+      console.error("Failed to clear chat:", error);
+    }
+  };
+
   return {
     messages,
     isLoading,
     sendMessage,
+    clearChat,
   };
 }

@@ -45,12 +45,39 @@ body {
 header {
   padding: 1.5rem 2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 header h1 {
   font-size: 2em;
   line-height: 1.1;
   margin: 0;
+}
+
+.clear-chat-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.25s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clear-chat-btn:hover {
+  background-color: #c0392b;
+}
+
+.clear-chat-btn:focus,
+.clear-chat-btn:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
 }
 
 .chat-container {

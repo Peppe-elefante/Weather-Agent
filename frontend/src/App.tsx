@@ -4,11 +4,11 @@ import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
 
 function App() {
-  const { messages, isLoading, sendMessage } = useChat()
+  const { messages, isLoading, sendMessage, clearChat } = useChat()
 
   return (
     <div className="app">
-      <ChatHeader />
+      <ChatHeader onClearChat={clearChat} />
       <main className="chat-container">
         <div className="messages-container">
           <MessageList messages={messages} />
