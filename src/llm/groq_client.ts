@@ -26,9 +26,9 @@ export const chat = async (
   try {
     logger.info(`Processing chat message: ${message_history?.at(-1)?.id}`);
 
-    let messages_prompt = WEATHER_PROMPT.concat(
-      message_history.map((m) => m.modelMessage),
-    );
+    let messages_prompt = WEATHER_PROMPT(
+      new Date().toLocaleDateString(),
+    ).concat(message_history.map((m) => m.modelMessage));
 
     const result = await generateText({
       model: groq("llama-3.1-8b-instant"),
