@@ -1,10 +1,11 @@
-# Vivarium
+# Weather agent
 
 A full-stack web application built with Cloudflare Workers, Hono, React, and AI capabilities.
 
 ## Tech Stack
 
 ### Backend
+
 - **Runtime**: Cloudflare Workers
 - **Framework**: Hono
 - **AI**: Vercel AI SDK with Cloudflare Agents
@@ -12,6 +13,7 @@ A full-stack web application built with Cloudflare Workers, Hono, React, and AI 
 - **Tooling**: Biome (linting & formatting)
 
 ### Frontend
+
 - **Framework**: React 18
 - **Build Tool**: Vite
 - **Language**: TypeScript
@@ -20,7 +22,7 @@ A full-stack web application built with Cloudflare Workers, Hono, React, and AI 
 ## Project Structure
 
 ```
-vivarium/
+weather-agent/
 ├── src/                    # Backend source code
 │   ├── index.ts           # Main Hono app entry point
 │   └── types.ts           # TypeScript type definitions
@@ -41,62 +43,168 @@ vivarium/
 └── README.md
 ```
 
-## Getting Started
+## Setup Guide
 
 ### Prerequisites
-- Node.js 18+ installed
-- npm or pnpm package manager
 
-### Installation
+Before you begin, ensure you have the following installed:
 
-1. Install backend dependencies:
+- **Node.js** 18 or higher ([Download](https://nodejs.org/))
+- **npm** (comes with Node.js) or **pnpm** package manager
+- **Git** (for version control)
+- **Cloudflare Account** (free tier available at [cloudflare.com](https://cloudflare.com))
+
+### Step 1: Clone the Repository
+
+```bash
+git clone <your-repository-url>
+cd weather-agent
+```
+
+### Step 2: Install Dependencies
+
+Install backend dependencies:
+
 ```bash
 npm install
 ```
 
-2. Install frontend dependencies:
+Install frontend dependencies:
+
 ```bash
 cd frontend
 npm install
 cd ..
 ```
 
-### Development
+### Step 3: Configure Cloudflare Wrangler
 
-Run both backend and frontend in development mode:
+1. **Login to Cloudflare:**
+
+```bash
+npx wrangler login
+```
+
+This will open a browser window to authenticate with your Cloudflare account.
+
+2. **Verify your configuration:**
+   The [wrangler.toml](wrangler.toml) file is already configured with:
+
+- AI binding for Cloudflare Workers AI
+- Durable Objects for conversation persistence
+- Observability enabled
+
+3. **Optional - Update your worker name:**
+   Edit [wrangler.toml](wrangler.toml) if you want to change the worker name from `weather-agent` to something else.
+
+### Step 4: Development Setup
+
+#### Option 1: Run Everything Together (Recommended)
+
+Start both backend and frontend in development mode:
+
 ```bash
 npm run dev
 ```
 
-Or run them separately:
+This will launch:
 
-Backend (Cloudflare Workers):
+- Backend (Cloudflare Workers) on `http://localhost:8787`
+- Frontend (Vite dev server) on `http://localhost:5173`
+
+#### Option 2: Run Separately
+
+Run backend only:
+
 ```bash
 npm run dev:backend
 ```
 
-Frontend (Vite dev server):
+Run frontend only (in a separate terminal):
+
 ```bash
 npm run dev:frontend
 ```
 
-The backend will run on `http://localhost:8787` and the frontend on `http://localhost:5173`.
+### Step 5: Verify Installation
 
-### Building
+1. Open your browser and navigate to `http://localhost:5173`
+2. You should see the weather agent frontend interface
+3. The backend API will be accessible at `http://localhost:8787`
 
-Build the frontend:
+### Step 6: Configure AI Models (Optional)
+
+The application supports multiple AI providers. To use them:
+
+1. **Groq API** (for fast inference):
+   - Get an API key from [console.groq.com](https://console.groq.com)
+   - Add to Wrangler secrets: `npx wrangler secret put GROQ_API_KEY`
+
+2. **OpenAI API**:
+   - Get an API key from [platform.openai.com](https://platform.openai.com)
+   - Add to Wrangler secrets: `npx wrangler secret put OPENAI_API_KEY`
+
+3. **Cloudflare Workers AI** (default):
+   - Already configured via the `[ai]` binding in [wrangler.toml](wrangler.toml)
+   - No additional setup required
+
+### Building for Production
+
+Build the frontend for production:
+
 ```bash
 npm run build:frontend
 ```
 
+This creates an optimized production build in the `frontend/dist` directory.
+
 ### Deployment
 
 Deploy to Cloudflare Workers:
+
 ```bash
 npm run deploy
 ```
 
-Note: Make sure you have configured your Cloudflare account with Wrangler before deploying.
+**First-time deployment notes:**
+
+- The deployment will create the Durable Object namespace automatically
+- Ensure you have completed `wrangler login` before deploying
+- Your worker will be deployed to `https://weather-agent.<your-subdomain>.workers.dev`
+
+### Troubleshooting
+
+#### Port already in use
+
+If ports 8787 or 5173 are already in use, you can:
+
+- Kill the process using that port
+- Or modify the port in [frontend/vite.config.ts](frontend/vite.config.ts) for the frontend
+
+#### Wrangler authentication issues
+
+```bash
+npx wrangler logout
+npx wrangler login
+```
+
+#### Dependencies issues
+
+Clear npm cache and reinstall:
+
+```bash
+rm -rf node_modules frontend/node_modules
+npm install
+cd frontend && npm install
+```
+
+#### Type errors
+
+Run type checking to identify issues:
+
+```bash
+npm run type-check
+```
 
 ## API Endpoints
 
@@ -107,16 +215,19 @@ Note: Make sure you have configured your Cloudflare account with Wrangler before
 ## Code Quality
 
 ### Linting
+
 ```bash
 npm run lint
 ```
 
 ### Formatting
+
 ```bash
 npm run format
 ```
 
 ### Type Checking
+
 ```bash
 npm run type-check
 ```
@@ -124,12 +235,15 @@ npm run type-check
 ## Configuration
 
 ### Cloudflare Workers
+
 Edit [wrangler.toml](wrangler.toml) to configure your Cloudflare Workers settings.
 
 ### Vite
+
 Edit [frontend/vite.config.ts](frontend/vite.config.ts) to configure Vite settings.
 
 ### Biome
+
 Edit [biome.json](biome.json) and [frontend/biome.json](frontend/biome.json) to customize linting and formatting rules.
 
 ## Next Steps
