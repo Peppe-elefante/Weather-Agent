@@ -5,6 +5,7 @@ import { logger } from "../index";
 import type { Env } from "../types/Env";
 import { WEATHER_PROMPT } from "../utils/system_prompts";
 import { weatherTool } from "../utils/tools";
+import { getCurrentDateString } from "../utils/date";
 
 export const createGroqClient = (env: Env) => {
   return createGroq({
@@ -26,9 +27,10 @@ export const chat = async (
   try {
     logger.info(`Processing chat message: ${message_history?.at(-1)?.id}`);
 
-    let messages_prompt = WEATHER_PROMPT(
-      new Date().toLocaleDateString(),
-    ).concat(message_history.map((m) => m.modelMessage));
+    const dateString = getCurrentDateString();
+    let messages_prompt = WEATHER_PROMPT(dateString).concat(
+      message_history.map((m) => m.modelMessage),
+    );
 
     const result = await generateText({
       model: groq("llama-3.1-8b-instant"),
