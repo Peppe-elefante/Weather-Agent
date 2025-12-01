@@ -11,7 +11,14 @@ import { DurableObjectRateLimiter } from "@hono-rate-limiter/cloudflare";
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.use("/*", cors());
+app.use(
+  "*",
+  cors({
+    origin: "https://weather-agent-frontend.pages.dev",
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 app.use("/api/chat", limiter);
 
 app.post("/api/chat", async (c) => {
@@ -81,6 +88,10 @@ app.post("/api/clear-chat", async (c) => {
     logger.error({ error }, "Clear chat endpoint error");
     return c.json({ error: "Internal server error" }, 500);
   }
+});
+
+app.options("*", (c) => {
+  return c.body(null, 204);
 });
 
 export default app;
