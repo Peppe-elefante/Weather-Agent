@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import type { Env } from "./types/Env";
 import type { Message } from "./types/message";
 import { chat } from "./llm/groq_client";
@@ -10,28 +11,7 @@ import { DurableObjectRateLimiter } from "@hono-rate-limiter/cloudflare";
 
 const app = new Hono<{ Bindings: Env }>();
 
-// Manual CORS middleware
-app.use("*", async (c, next) => {
-  // Handle preflight requests
-  if (c.req.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        "Access-Control-Allow-Origin": "https://weather-agent-frontend.pages.dev",
-        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Max-Age": "86400",
-      },
-    });
-  }
-
-  // Set CORS headers for actual requests
-  c.header("Access-Control-Allow-Origin", "https://weather-agent-frontend.pages.dev");
-  c.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  c.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  await next();
-});
+app.use("/*", cors());
 
 app.use("/api/chat", limiter);
 
