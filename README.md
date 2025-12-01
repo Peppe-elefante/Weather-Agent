@@ -168,6 +168,7 @@ Deploy the backend to Cloudflare Workers:
 
 ```bash
 npm run deploy:backend
+npm run deploy:frontend
 ```
 
 **First-time deployment notes:**
@@ -176,21 +177,7 @@ npm run deploy:backend
 - Ensure you have completed `wrangler login` before deploying
 - Make sure both `GROQ_API_KEY` and `WEATHER_API_KEY` secrets are configured (see Step 3)
 - Your worker will be deployed to `https://weather-agent.<your-subdomain>.workers.dev`
-
-#### Deploy Frontend
-
-Deploy the frontend to Cloudflare Pages:
-
-```bash
-npm run deploy:frontend
-```
-
-This command will:
-- Install frontend dependencies
-- Build the frontend for production
-- Deploy to Cloudflare Pages
-
-**Note:** The frontend deployment expects a Cloudflare Pages project named `weather-agent-frontend`. You may need to create this project first or modify the project name in [package.json](package.json).
+- Your frontend will be deployed to `https://weather-agent-frontend.<your-subdomain>.workers.dev`
 
 ### Troubleshooting
 
