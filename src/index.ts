@@ -11,15 +11,10 @@ import { DurableObjectRateLimiter } from "@hono-rate-limiter/cloudflare";
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.use(
-  "*",
-  cors({
-    origin: "https://weather-agent-frontend.pages.dev",
-    allowMethods: ["POST", "GET", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
-  }),
-);
+app.use("*", cors());
 app.use("/api/chat", limiter);
+
+app.get("/", (c) => c.text("the workes is working!"));
 
 app.post("/api/chat", async (c) => {
   let stub: DurableObjectStub | undefined;
