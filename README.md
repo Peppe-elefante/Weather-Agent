@@ -19,29 +19,7 @@ A full-stack web application built with Cloudflare Workers, Hono, React, and AI 
 - **Language**: TypeScript
 - **Tooling**: Biome (linting & formatting)
 
-## Project Structure
-
-```
-weather-agent/
-├── src/                    # Backend source code
-│   ├── index.ts           # Main Hono app entry point
-│   └── types.ts           # TypeScript type definitions
-├── frontend/              # Frontend React application
-│   ├── src/
-│   │   ├── App.tsx       # Main React component
-│   │   ├── main.tsx      # React entry point
-│   │   └── index.css     # Global styles
-│   ├── index.html        # HTML template
-│   ├── vite.config.ts    # Vite configuration
-│   ├── tsconfig.json     # Frontend TypeScript config
-│   ├── biome.json        # Frontend Biome config
-│   └── package.json      # Frontend dependencies
-├── wrangler.toml         # Cloudflare Workers config
-├── tsconfig.json         # Backend TypeScript config
-├── biome.json            # Backend Biome config
-├── package.json          # Backend dependencies
-└── README.md
-```
+````
 
 ## Setup Guide
 
@@ -59,7 +37,7 @@ Before you begin, ensure you have the following installed:
 ```bash
 git clone <your-repository-url>
 cd weather-agent
-```
+````
 
 ### Step 2: Install Dependencies
 
@@ -94,12 +72,14 @@ When prompted, paste your Groq API key. You can get a free API key from [console
 The frontend uses environment variables for API configuration. For development, the defaults work out of the box. For production deployment:
 
 1. Copy the example environment file:
+
 ```bash
 cd frontend
 cp .env.example .env
 ```
 
 2. Edit `.env` and set your production API URL:
+
 ```
 VITE_API_URL=https://your-worker-name.your-subdomain.workers.dev
 ```
@@ -257,14 +237,3 @@ Edit [frontend/vite.config.ts](frontend/vite.config.ts) to configure Vite settin
 ### Biome
 
 Edit [biome.json](biome.json) and [frontend/biome.json](frontend/biome.json) to customize linting and formatting rules.
-
-## Next Steps
-
-1. Set up Cloudflare AI binding in your Wrangler configuration
-2. Implement AI SDK integration in the `/api/chat` endpoint
-3. Build out your React components
-4. Add authentication and database as needed
-
-## License
-
-MIT
