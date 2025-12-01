@@ -11,28 +11,7 @@ import { DurableObjectRateLimiter } from "@hono-rate-limiter/cloudflare";
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.use(
-  "/*",
-  cors({
-    origin: (origin) => {
-      // Allow localhost for development
-      if (origin.startsWith("http://localhost")) {
-        return origin;
-      }
-      // Allow Cloudflare Pages deployments (*.pages.dev)
-      if (origin.endsWith(".pages.dev")) {
-        return origin;
-      }
-      // Allow custom domains if needed
-      return origin;
-    },
-    allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type"],
-    exposeHeaders: ["Content-Length"],
-    maxAge: 600,
-    credentials: true,
-  })
-);
+//app.use("/*", cors());
 app.use("/api/chat", limiter);
 
 app.post("/api/chat", async (c) => {
