@@ -11,7 +11,7 @@ import { DurableObjectRateLimiter } from "@hono-rate-limiter/cloudflare";
 
 const app = new Hono<{ Bindings: Env }>();
 
-//app.use("/*", cors());
+app.use("/*", cors());
 app.use("/api/chat", limiter);
 
 app.post("/api/chat", async (c) => {
