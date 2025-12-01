@@ -12,16 +12,23 @@ const app = new Hono<{ Bindings: Env }>();
 
 // Manual CORS middleware
 app.use("*", async (c, next) => {
-  // Set CORS headers
+  // Handle preflight requests
+  if (c.req.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "https://weather-agent-frontend.pages.dev",
+        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Max-Age": "86400",
+      },
+    });
+  }
+
+  // Set CORS headers for actual requests
   c.header("Access-Control-Allow-Origin", "https://weather-agent-frontend.pages.dev");
   c.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
   c.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  c.header("Access-Control-Max-Age", "86400");
-
-  // Handle preflight requests
-  if (c.req.method === "OPTIONS") {
-    return new Response(null, { status: 204 });
-  }
 
   await next();
 });
