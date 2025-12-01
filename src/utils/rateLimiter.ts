@@ -6,7 +6,7 @@ import type { Env } from "../types/Env";
 export const limiter = (c: Context<{ Bindings: Env }>, next: Next) =>
   rateLimiter<{ Bindings: Env }>({
     windowMs: 5 * 60 * 1000,
-    limit: 30,
+    limit: 3000,
     standardHeaders: "draft-6",
     keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "",
     store: new DurableObjectStore({ namespace: c.env.CACHE }),

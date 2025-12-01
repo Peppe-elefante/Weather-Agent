@@ -28,7 +28,7 @@ export const chat = async (message_history: Message[], env: Env) => {
       model: groq("llama-3.3-70b-versatile"),
       messages: messages_prompt,
       tools: {
-        weatherTool,
+        weatherTool: weatherTool(env),
       },
       stopWhen: stepCountIs(5),
     });

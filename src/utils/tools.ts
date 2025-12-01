@@ -1,10 +1,10 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { GeocodingResponse, GeocodingResult } from "../types/Geocoding";
 import { WeatherResponse } from "../types/WeatherResponse";
 import { logger } from "./logger";
+import { Env } from "../types/Env";
 
-export const weatherTool = tool({
+export const weatherTool = (env: Env) => tool({
   description: "Get the current weather and forecast for a location by name",
   inputSchema: z.object({
     name: z
@@ -15,32 +15,15 @@ export const weatherTool = tool({
   }),
   execute: async ({ name }) => {
     try {
-      // First geocode the location
-      const geoResponse = await fetch(
-        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=en&format=json`,
-      );
-
-      if (!geoResponse.ok) {
-        logger.error(`Geocoding API error: ${geoResponse.status}`);
-        throw new Error(`Geocoding API error: ${geoResponse.status}`);
+      // Get weather data from WeatherAPI.com
+      const apiKey = env.WEATHER_API_KEY;
+      if (!apiKey) {
+        logger.error("Weather API key not found");
+        throw new Error("Weather API key not configured");
       }
 
-      const geoData = (await geoResponse.json()) as GeocodingResponse;
-
-      if (!geoData.results || geoData.results.length === 0) {
-        logger.error(`Weather API error: Location "${name}" not found`);
-        return {
-          success: false,
-          error: `Location "${name}" not found`,
-        };
-      }
-
-      const geoResult = geoData.results[0];
-      logger.info(`found geodata for ${name}:\n${geoData}`);
-
-      // Then get the forecast
       const weatherResponse = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${geoResult.latitude}&longitude=${geoResult.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`,
+        `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(name)}&days=7&aqi=no&alerts=no`,
       );
 
       if (!weatherResponse.ok) {
@@ -52,28 +35,40 @@ export const weatherTool = tool({
 
       return {
         success: true,
-        location: geoResult.name,
-        country: geoResult.country,
+        location: weatherData.location.name,
+        country: weatherData.location.country,
+        region: weatherData.location.region,
         coordinates: {
-          latitude: geoResult.latitude,
-          longitude: geoResult.longitude,
+          latitude: weatherData.location.lat,
+          longitude: weatherData.location.lon,
         },
-        timezone: weatherData.timezone,
+        timezone: weatherData.location.tz_id,
+        localtime: weatherData.location.localtime,
         current: {
-          temperature: weatherData.current.temperature_2m,
-          apparentTemperature: weatherData.current.apparent_temperature,
-          humidity: weatherData.current.relative_humidity_2m,
-          precipitation: weatherData.current.precipitation,
-          windSpeed: weatherData.current.wind_speed_10m,
-          weatherCode: weatherData.current.weather_code,
+          temperature: weatherData.current.temp_c,
+          temperatureF: weatherData.current.temp_f,
+          feelsLike: weatherData.current.feelslike_c,
+          feelsLikeF: weatherData.current.feelslike_f,
+          humidity: weatherData.current.humidity,
+          precipitation: weatherData.current.precip_mm,
+          precipitationIn: weatherData.current.precip_in,
+          cloud: weatherData.current.cloud,
+          uv: weatherData.current.uv,
+          gustMph: weatherData.current.gust_mph,
+          gustKph: weatherData.current.gust_kph,
         },
-        daily: {
-          dates: weatherData.daily.time,
-          temperatureMax: weatherData.daily.temperature_2m_max,
-          temperatureMin: weatherData.daily.temperature_2m_min,
-          precipitationSum: weatherData.daily.precipitation_sum,
-          weatherCodes: weatherData.daily.weather_code,
-        },
+        forecast: weatherData.forecast.forecastday.map((day) => ({
+          date: day.date,
+          maxTempC: day.day.maxtemp_c,
+          maxTempF: day.day.maxtemp_f,
+          minTempC: day.day.mintemp_c,
+          minTempF: day.day.mintemp_f,
+          avgTempC: day.day.avgtemp_c,
+          avgTempF: day.day.avgtemp_f,
+          totalSnowCm: day.day.totalsnow_cm,
+          chanceOfRain: day.day.daily_chance_of_rain,
+          chanceOfSnow: day.day.daily_chance_of_snow,
+        })),
       };
     } catch (error) {
       return {
