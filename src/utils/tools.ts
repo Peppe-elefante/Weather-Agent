@@ -2,6 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { GeocodingResponse, GeocodingResult } from "../types/Geocoding";
 import { WeatherResponse } from "../types/WeatherResponse";
+import { logger } from "./logger";
 
 export const weatherTool = tool({
   description: "Get the current weather and forecast for a location by name",
@@ -20,12 +21,14 @@ export const weatherTool = tool({
       );
 
       if (!geoResponse.ok) {
+        logger.error(`Geocoding API error: ${geoResponse.status}`);
         throw new Error(`Geocoding API error: ${geoResponse.status}`);
       }
 
       const geoData = (await geoResponse.json()) as GeocodingResponse;
 
       if (!geoData.results || geoData.results.length === 0) {
+        logger.error(`Weather API error: Location "${name}" not found`);
         return {
           success: false,
           error: `Location "${name}" not found`,
@@ -33,6 +36,7 @@ export const weatherTool = tool({
       }
 
       const geoResult = geoData.results[0];
+      logger.info(`found geodata for ${name}:\n${geoData}`);
 
       // Then get the forecast
       const weatherResponse = await fetch(
@@ -40,6 +44,7 @@ export const weatherTool = tool({
       );
 
       if (!weatherResponse.ok) {
+        logger.error(`Weather API error: ${weatherResponse.status}`);
         throw new Error(`Weather API error: ${weatherResponse.status}`);
       }
 
