@@ -15,11 +15,11 @@ class_name = "DurableObjectRateLimiter"
 
 [[migrations]]
 tag = "v1"
-new_classes = ["ConversationDurableObject"]
+new_sqlite_classes = ["ConversationDurableObject"]
 
 [[migrations]]
 tag = "v2"
-new_classes = ["DurableObjectRateLimiter"]
+new_sqlite_classes = ["DurableObjectRateLimiter"]
 
 [observability]
 enabled = true

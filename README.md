@@ -200,9 +200,7 @@ npm run type-check
 
 ## API Endpoints
 
-- `GET /` - Welcome message
-- `GET /health` - Health check endpoint
-- `POST /api/chat` - AI chat endpoint (placeholder)
+- `POST /api/chat` - AI chat endpoint -`POST /api/clear-chat` - clear chat history
 
 ## Code Quality
 
