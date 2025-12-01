@@ -59,13 +59,23 @@ cd ..
 
 #### Backend (Required)
 
-Set up your Groq API key for AI functionality:
+Set up your API keys for AI and weather functionality:
+
+1. **Groq API Key** (for AI functionality):
 
 ```bash
 npx wrangler secret put GROQ_API_KEY
 ```
 
 When prompted, paste your Groq API key. You can get a free API key from [console.groq.com](https://console.groq.com).
+
+2. **WeatherAPI Key** (for weather data):
+
+```bash
+npx wrangler secret put WEATHER_API_KEY
+```
+
+When prompted, paste your WeatherAPI key. You can get a free API key from [weatherapi.com](https://www.weatherapi.com).
 
 #### Frontend (Optional)
 
@@ -152,17 +162,35 @@ This creates an optimized production build in the `frontend/dist` directory.
 
 ### Deployment
 
-Deploy to Cloudflare Workers:
+#### Deploy Backend
+
+Deploy the backend to Cloudflare Workers:
 
 ```bash
-npm run deploy
+npm run deploy:backend
 ```
 
 **First-time deployment notes:**
 
 - The deployment will create the Durable Object namespace automatically
 - Ensure you have completed `wrangler login` before deploying
+- Make sure both `GROQ_API_KEY` and `WEATHER_API_KEY` secrets are configured (see Step 3)
 - Your worker will be deployed to `https://weather-agent.<your-subdomain>.workers.dev`
+
+#### Deploy Frontend
+
+Deploy the frontend to Cloudflare Pages:
+
+```bash
+npm run deploy:frontend
+```
+
+This command will:
+- Install frontend dependencies
+- Build the frontend for production
+- Deploy to Cloudflare Pages
+
+**Note:** The frontend deployment expects a Cloudflare Pages project named `weather-agent-frontend`. You may need to create this project first or modify the project name in [package.json](package.json).
 
 ### Troubleshooting
 
