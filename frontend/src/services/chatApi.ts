@@ -48,6 +48,9 @@ export async function sendChatMessage(
   });
 
   if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error("You have sent too many requests. Please try again in five minutes.");
+    }
     throw new Error("Failed to get response from server");
   }
 

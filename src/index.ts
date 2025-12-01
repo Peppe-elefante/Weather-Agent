@@ -41,8 +41,6 @@ app.post("/api/chat", async (c) => {
     );
     const history: Message[] = await historyResponse.json();
 
-    logger.info(`curent chat history: ${JSON.stringify(history)}`);
-
     result = await chat(history, c.env);
 
     return result.toTextStreamResponse();
