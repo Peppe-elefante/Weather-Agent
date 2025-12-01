@@ -1,7 +1,7 @@
 import { createGroq } from "@ai-sdk/groq";
 import { generateText, stepCountIs, ModelMessage } from "ai";
 import { Message } from "../types/message";
-import { logger } from "../index";
+import { logger } from "../utils/logger";
 import type { Env } from "../types/Env";
 import { WEATHER_PROMPT } from "../utils/system_prompts";
 import { weatherTool } from "../utils/tools";

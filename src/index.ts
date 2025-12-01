@@ -5,20 +5,13 @@ import type { Message } from "./types/message";
 import { chat } from "./llm/groq_client";
 import { ConversationDurableObject } from "./durable_objects/ConversationDurableObject";
 import { addMessageToConversation } from "./utils/conversation";
-
-import pino from "pino";
-
-export const logger = pino({
-  level: "info",
-  transport: {
-    target: "pino-pretty",
-    options: { colorize: true },
-  },
-});
+import { logger } from "./utils/logger";
+import { limiter } from "./utils/rateLimiter";
 
 const app = new Hono<{ Bindings: Env }>();
 
 app.use("/*", cors());
+app.use("/api/*", limiter);
 
 app.post("/api/chat", async (c) => {
   try {
