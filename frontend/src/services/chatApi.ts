@@ -1,6 +1,8 @@
 import { Message } from "../types/message";
 
 // Use environment variable for API URL with fallback to localhost for development
+// NOTE: VITE_API_URL must be set as an environment variable in Cloudflare Pages (build settings)
+// Alternative: Auto-detect API URL in production using window.location
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8787";
 const API_URL = `${API_BASE_URL}/api/chat`;
 const CLEAR_API_URL = `${API_BASE_URL}/api/clear-chat`;
