@@ -202,26 +202,6 @@ npm run type-check
 
 - `POST /api/chat` - AI chat endpoint -`POST /api/clear-chat` - clear chat history
 
-## Code Quality
-
-### Linting
-
-```bash
-npm run lint
-```
-
-### Formatting
-
-```bash
-npm run format
-```
-
-### Type Checking
-
-```bash
-npm run type-check
-```
-
 ## Configuration
 
 ### Cloudflare Workers
