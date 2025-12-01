@@ -7,6 +7,7 @@ import { ConversationDurableObject } from "./durable_objects/ConversationDurable
 import { addMessageToConversation } from "./utils/conversation";
 import { logger } from "./utils/logger";
 import { limiter } from "./utils/rateLimiter";
+import { DurableObjectRateLimiter } from "@hono-rate-limiter/cloudflare";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -82,4 +83,4 @@ app.post("/api/clear-chat", async (c) => {
 });
 
 export default app;
-export { ConversationDurableObject };
+export { ConversationDurableObject, DurableObjectRateLimiter };
