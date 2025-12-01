@@ -155,7 +155,8 @@ This creates an optimized production build in the `frontend/dist` directory.
 Deploy to Cloudflare Workers:
 
 ```bash
-npm run deploy
+npm run deploy:backend
+npm run deploy:frontend
 ```
 
 **First-time deployment notes:**
@@ -163,6 +164,7 @@ npm run deploy
 - The deployment will create the Durable Object namespace automatically
 - Ensure you have completed `wrangler login` before deploying
 - Your worker will be deployed to `https://weather-agent.<your-subdomain>.workers.dev`
+- Your frontend will be deployed to `https://weather-agent-frontend.<your-subdomain>.workers.dev`
 
 ### Troubleshooting
 
