@@ -12,9 +12,12 @@ import { DurableObjectRateLimiter } from "@hono-rate-limiter/cloudflare";
 const app = new Hono<{ Bindings: Env }>();
 
 app.use("/*", cors());
-app.use("/api/*", limiter);
+app.use("/api/chat", limiter);
 
 app.post("/api/chat", async (c) => {
+  let stub: DurableObjectStub | undefined;
+  let result: any;
+
   try {
     const {
       messageObj,
@@ -28,34 +31,34 @@ app.post("/api/chat", async (c) => {
     logger.info(`received chat message: ${messageObj.modelMessage.content}`);
 
     const id = c.env.CONVERSATIONS.idFromName(sessionId);
-    const stub = c.env.CONVERSATIONS.get(id);
+    const conversationStub = c.env.CONVERSATIONS.get(id);
+    stub = conversationStub;
 
-    await addMessageToConversation(stub, messageObj);
+    await addMessageToConversation(conversationStub, messageObj);
 
-    const historyResponse = await stub.fetch(new Request("http://do/get"));
+    const historyResponse = await conversationStub.fetch(
+      new Request("http://do/get"),
+    );
     const history: Message[] = await historyResponse.json();
 
-    const stream = await chat(history, c.env);
+    logger.info(`curent chat history: ${JSON.stringify(history)}`);
 
-    (async () => {
-      try {
-        const response = await stream.response;
-        for (const message of response.messages) {
-          await addMessageToConversation(stub, {
-            id: messageObj.id,
-            modelMessage: message,
-            timestamp: new Date(),
-          });
-        }
-      } catch (error) {
-        logger.error({ error }, "Error saving messages to conversation");
-      }
-    })();
+    result = await chat(history, c.env);
 
-    return stream.toTextStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     logger.error({ error }, "Chat endpoint error");
     return c.json({ error: "Internal server error" }, 500);
+  } finally {
+    if (stub && result) {
+      const assistantMessage = await result.text;
+      const assistantMessageObj: Message = {
+        id: crypto.randomUUID(),
+        modelMessage: { role: "assistant", content: assistantMessage },
+        timestamp: new Date(),
+      };
+      await addMessageToConversation(stub, assistantMessageObj);
+    }
   }
 });
 
