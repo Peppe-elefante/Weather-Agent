@@ -3,7 +3,7 @@ import { cors } from "hono/cors";
 import type { Env } from "./types/Env";
 import type { Message } from "./types/message";
 import { chat } from "./llm/groq_client";
-import { ConversationDurableObject } from "./ConversationDurableObject";
+import { ConversationDurableObject } from "./durable_objects/ConversationDurableObject";
 import { addMessageToConversation } from "./utils/conversation";
 
 import pino from "pino";
@@ -11,7 +11,7 @@ import pino from "pino";
 export const logger = pino({
   level: "info",
   transport: {
-    target: "pino-pretty", // For development
+    target: "pino-pretty",
     options: { colorize: true },
   },
 });
@@ -20,7 +20,6 @@ const app = new Hono<{ Bindings: Env }>();
 
 app.use("/*", cors());
 
-// AI endpoint example
 app.post("/api/chat", async (c) => {
   try {
     const {

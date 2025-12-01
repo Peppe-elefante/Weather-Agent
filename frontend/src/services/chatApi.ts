@@ -9,10 +9,6 @@ export interface ChatApiResponse {
   response: string;
 }
 
-/**
- * Get or create a unique session ID for the current user
- * Session ID is stored in localStorage to persist across page refreshes
- */
 function getOrCreateSessionId(): string {
   const SESSION_KEY = "weather-agent-session-id";
   let sessionId = localStorage.getItem(SESSION_KEY);
@@ -40,7 +36,6 @@ export async function sendChatMessage(text: string): Promise<string> {
     sessionId: getOrCreateSessionId(),
   };
 
-  console.log(JSON.stringify(payload));
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {

@@ -1,9 +1,8 @@
 import { DurableObject } from "cloudflare:workers";
-import type { Message } from "./types/message";
-import type { Env } from "./types/Env";
+import type { Message } from "../types/message";
+import type { Env } from "../types/Env";
 
-export class ConversationDurableObject extends DurableObject<Env>
-{
+export class ConversationDurableObject extends DurableObject<Env> {
   private messages: Message[] = [];
 
   constructor(state: DurableObjectState, env: Env) {
