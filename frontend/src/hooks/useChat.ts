@@ -9,8 +9,11 @@ export function useChat() {
   const sendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return;
 
+    const userMessageId = Date.now().toString();
+    const pendingAssistantId = `pending-${Date.now()}`;
+
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: userMessageId,
       modelMessage: {
         role: "user",
         content: text,
@@ -18,32 +21,54 @@ export function useChat() {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    // Optimistically add user message and pending assistant message
+    const pendingAssistantMessage: Message = {
+      id: pendingAssistantId,
+      modelMessage: {
+        role: "assistant",
+        content: "",
+      },
+      timestamp: new Date(),
+      isPending: true,
+    };
+
+    setMessages((prev) => [...prev, userMessage, pendingAssistantMessage]);
     setIsLoading(true);
 
     try {
       const responseText = await sendChatMessage(text);
 
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        modelMessage: {
-          role: "assistant",
-          content: responseText,
-        },
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      // Replace pending message with actual response
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === pendingAssistantId
+            ? {
+                ...msg,
+                modelMessage: {
+                  role: "assistant",
+                  content: responseText,
+                },
+                isPending: false,
+              }
+            : msg
+        )
+      );
     } catch (error) {
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        modelMessage: {
-          role: "assistant",
-          content: `Error: ${error instanceof Error ? error.message : "Failed to send message"}`,
-        },
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      // Replace pending message with error message
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === pendingAssistantId
+            ? {
+                ...msg,
+                modelMessage: {
+                  role: "assistant",
+                  content: `Error: ${error instanceof Error ? error.message : "Failed to send message"}`,
+                },
+                isPending: false,
+              }
+            : msg
+        )
+      );
     } finally {
       setIsLoading(false);
     }

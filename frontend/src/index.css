@@ -270,6 +270,47 @@ code {
   font-size: 0.9em;
 }
 
+/* Skeleton Loader Styles */
+.skeleton-loader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeleton-line {
+  height: 1em;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-line-1 {
+  width: 90%;
+}
+
+.skeleton-line-2 {
+  width: 95%;
+}
+
+.skeleton-line-3 {
+  width: 70%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #1446a0;
@@ -280,5 +321,14 @@ code {
   }
   code {
     background-color: #f0f0f0;
+  }
+  .skeleton-line {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.05) 25%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(0, 0, 0, 0.05) 75%
+    );
+    background-size: 200% 100%;
   }
 }
