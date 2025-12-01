@@ -90,9 +90,5 @@ app.post("/api/clear-chat", async (c) => {
   }
 });
 
-app.options("*", (c) => {
-  return c.body(null, 204);
-});
-
 export default app;
 export { ConversationDurableObject, DurableObjectRateLimiter };
