@@ -21,7 +21,10 @@ function getOrCreateSessionId(): string {
   return sessionId;
 }
 
-export async function sendChatMessage(text: string): Promise<string> {
+export async function sendChatMessage(
+  text: string,
+  onChunk?: (chunk: string) => void
+): Promise<string> {
   const message: Message = {
     id: crypto.randomUUID().toString(),
     modelMessage: {
@@ -48,8 +51,36 @@ export async function sendChatMessage(text: string): Promise<string> {
     throw new Error("Failed to get response from server");
   }
 
-  const data: ChatApiResponse = await response.json();
-  return data.response || "No response received";
+  // Handle streaming response
+  if (!response.body) {
+    throw new Error("Response body is empty");
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let fullText = "";
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        break;
+      }
+
+      const chunk = decoder.decode(value, { stream: true });
+      fullText += chunk;
+
+      // Call the onChunk callback if provided
+      if (onChunk) {
+        onChunk(chunk);
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  return fullText || "No response received";
 }
 
 export async function clearChat(): Promise<void> {

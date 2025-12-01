@@ -34,21 +34,24 @@ app.post("/api/chat", async (c) => {
     const historyResponse = await stub.fetch(new Request("http://do/get"));
     const history: Message[] = await historyResponse.json();
 
-    const ai_response = await chat(history, c.env);
+    const stream = await chat(history, c.env);
 
-    for (const message of ai_response.messages) {
-      if (message.role !== "user") {
-        await addMessageToConversation(stub, {
-          id: messageObj.id,
-          modelMessage: message,
-          timestamp: new Date(),
-        });
+    (async () => {
+      try {
+        const response = await stream.response;
+        for (const message of response.messages) {
+          await addMessageToConversation(stub, {
+            id: messageObj.id,
+            modelMessage: message,
+            timestamp: new Date(),
+          });
+        }
+      } catch (error) {
+        logger.error({ error }, "Error saving messages to conversation");
       }
-    }
+    })();
 
-    return c.json({
-      response: ai_response.text,
-    });
+    return stream.toTextStreamResponse();
   } catch (error) {
     logger.error({ error }, "Chat endpoint error");
     return c.json({ error: "Internal server error" }, 500);

@@ -1,5 +1,5 @@
 import { createGroq } from "@ai-sdk/groq";
-import { generateText, stepCountIs, ModelMessage } from "ai";
+import { streamText, stepCountIs } from "ai";
 import { Message } from "../types/message";
 import { logger } from "../utils/logger";
 import type { Env } from "../types/Env";
@@ -13,15 +13,10 @@ export const createGroqClient = (env: Env) => {
   });
 };
 
-export interface ChatResult {
-  text: string;
-  messages: ModelMessage[];
-}
-
 export const chat = async (
   message_history: Message[],
   env: Env,
-): Promise<ChatResult> => {
+) => {
   const groq = createGroqClient(env);
 
   try {
@@ -32,7 +27,7 @@ export const chat = async (
       message_history.map((m) => m.modelMessage),
     );
 
-    const result = await generateText({
+    const result = streamText({
       model: groq("llama-3.1-8b-instant"),
       messages: messages_prompt,
       tools: {
@@ -41,13 +36,7 @@ export const chat = async (
       stopWhen: stepCountIs(5),
     });
 
-    logger.info(`received AI response message: ${JSON.stringify(result.text)}`);
-    logger.info(`response steps count: ${result.response.messages.length}`);
-
-    return {
-      text: result.text,
-      messages: result.response.messages,
-    };
+    return result;
   } catch (error) {
     logger.error({ error }, "Error generating chat response");
     throw error;
