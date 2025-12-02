@@ -23,7 +23,7 @@ export const chat = async (message_history: Message[], env: Env) => {
     );
 
     const result = streamText({
-      model: groq("llama-3.1-8b-instant"),
+      model: groq("llama-3.3-70b-versatile"),
       messages: messages_prompt,
       tools: {
         geocodeTool: geocodeTool(env),
