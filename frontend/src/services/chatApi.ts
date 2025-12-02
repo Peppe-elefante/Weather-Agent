@@ -25,7 +25,7 @@ function getOrCreateSessionId(): string {
 
 export async function sendChatMessage(
   text: string,
-  onChunk?: (chunk: string) => void
+  onChunk?: (chunk: string) => void,
 ): Promise<string> {
   const message: Message = {
     id: crypto.randomUUID().toString(),
@@ -51,7 +51,9 @@ export async function sendChatMessage(
 
   if (!response.ok) {
     if (response.status === 429) {
-      throw new Error("You have sent too many requests. Please try again in five minutes.");
+      throw new Error(
+        "You have sent too many requests. Please try again in five minutes.",
+      );
     }
     throw new Error("Failed to get response from server");
   }
@@ -104,4 +106,28 @@ export async function clearChat(): Promise<void> {
   if (!response.ok) {
     throw new Error("Failed to clear chat");
   }
+}
+
+export async function getChat(): Promise<Message[]> {
+  const sessionId = getOrCreateSessionId();
+
+  const response = await fetch(`${API_URL}?sessionId=${sessionId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to get chat messages");
+  }
+
+  const data = await response.json();
+  const messages = data || [];
+
+  // Convert timestamp strings to Date objects
+  return messages.map((msg: Message) => ({
+    ...msg,
+    timestamp: new Date(msg.timestamp),
+  }));
 }

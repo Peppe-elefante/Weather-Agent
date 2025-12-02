@@ -215,7 +215,9 @@ npm run type-check
 
 ## API Endpoints
 
-- `POST /api/chat` - AI chat endpoint -`POST /api/clear-chat` - clear chat history
+- `POST /api/chat` - AI chat endpoint
+- `POST /api/clear-chat` - clear chat history
+- `GET /api/chat` - retriev AI chat history
 
 ## Configuration
 

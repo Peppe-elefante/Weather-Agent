@@ -1,10 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Message } from "../types/message";
-import { sendChatMessage, clearChat as clearChatApi } from "../services/chatApi";
+import {
+  sendChatMessage,
+  clearChat as clearChatApi,
+  getChat,
+} from "../services/chatApi";
 
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Load messages on mount
+  useEffect(() => {
+    const loadMessages = async () => {
+      try {
+        const loadedMessages = await getChat();
+        console.log(JSON.stringify(loadedMessages));
+        setMessages(loadedMessages);
+      } catch (error) {
+        console.error("Failed to load chat messages:", error);
+      }
+    };
+
+    loadMessages();
+  }, []);
 
   const sendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return;
@@ -50,8 +69,8 @@ export function useChat() {
                 },
                 isPending: false,
               }
-            : msg
-        )
+            : msg,
+        ),
       );
     } catch (error) {
       // Replace pending message with error message
@@ -66,8 +85,8 @@ export function useChat() {
                 },
                 isPending: false,
               }
-            : msg
-        )
+            : msg,
+        ),
       );
     } finally {
       setIsLoading(false);
@@ -75,6 +94,12 @@ export function useChat() {
   };
 
   const clearChat = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to clear the chat? The weather agent's memory will be wiped and it won't remember previous conversations.",
+    );
+
+    if (!confirmed) return;
+
     try {
       await clearChatApi();
       setMessages([]);

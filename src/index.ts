@@ -87,5 +87,28 @@ app.post("/api/clear-chat", async (c) => {
   }
 });
 
+app.get("/api/chat", async (c) => {
+  try {
+    const sessionId = c.req.query("sessionId");
+
+    if (!sessionId) {
+      return c.json({ error: "Session ID is required" }, 400);
+    }
+
+    logger.info(`getting chat history for session: ${sessionId}`);
+
+    const id = c.env.CONVERSATIONS.idFromName(sessionId);
+    const stub = c.env.CONVERSATIONS.get(id);
+
+    const chatHistoryResponse = await stub.fetch(new Request("http://do/get"));
+    const result: Message[] = await chatHistoryResponse.json();
+    logger.info(result);
+    return c.json(result);
+  } catch (error) {
+    logger.error({ error }, "get chat endpoint error");
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
 export default app;
 export { ConversationDurableObject, DurableObjectRateLimiter };
