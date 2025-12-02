@@ -29,7 +29,7 @@ export const chat = async (message_history: Message[], env: Env) => {
         geocodeTool: geocodeTool(env),
         forecastTool: forecastTool(env),
       },
-      stopWhen: stepCountIs(5),
+      stopWhen: stepCountIs(8),
     });
 
     return result;
