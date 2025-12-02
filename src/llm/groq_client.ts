@@ -30,6 +30,7 @@ export const chat = async (message_history: Message[], env: Env) => {
         forecastTool: forecastTool(env),
       },
       stopWhen: stepCountIs(8),
+      maxRetries: 4,
     });
 
     return result;
