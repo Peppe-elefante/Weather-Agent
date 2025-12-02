@@ -43,7 +43,6 @@ export const forecastTool = (env: Env) =>
         logger.info(
           `Fetched weather for: ${weatherData.location.name}, ${weatherData.location.country}`,
         );
-
         // Return a simplified response to avoid exceeding model limits
         return {
           success: true,
@@ -52,18 +51,18 @@ export const forecastTool = (env: Env) =>
           current: {
             temp_c: weatherData.current.temp_c,
             temp_f: weatherData.current.temp_f,
-            condition: weatherData.current.condition.text,
+            condition: weatherData.current.condition?.text || "N/A",
             humidity: weatherData.current.humidity,
             precip_mm: weatherData.current.precip_mm,
             cloud: weatherData.current.cloud,
-            wind_kph: weatherData.current.wind_kph,
-            wind_dir: weatherData.current.wind_dir,
+            wind_kph: weatherData.current.wind_kph || 0,
+            wind_dir: weatherData.current.wind_dir || "N/A",
           },
           forecast: weatherData.forecast.forecastday.map((day) => ({
             date: day.date,
             max_c: day.day.maxtemp_c,
             min_c: day.day.mintemp_c,
-            condition: day.day.condition.text,
+            condition: day.day.condition?.text || "N/A",
             rain_chance: day.day.daily_chance_of_rain,
             snow_chance: day.day.daily_chance_of_snow,
           })),

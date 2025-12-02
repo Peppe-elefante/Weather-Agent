@@ -15,14 +15,14 @@ export interface WeatherResponse {
     temp_c: number;
     temp_f: number;
     is_day: number;
-    condition: {
+    condition?: {
       text: string;
       icon: string;
       code: number;
     };
-    wind_kph: number;
-    wind_mph: number;
-    wind_dir: string;
+    wind_kph?: number;
+    wind_mph?: number;
+    wind_dir?: string;
     precip_mm: number;
     precip_in: number;
     humidity: number;
@@ -49,7 +49,7 @@ export interface WeatherResponse {
         daily_chance_of_rain: number;
         daily_will_it_snow: number;
         daily_chance_of_snow: number;
-        condition: {
+        condition?: {
           text: string;
           icon: string;
           code: number;
