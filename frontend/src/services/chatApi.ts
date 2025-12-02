@@ -58,7 +58,6 @@ export async function sendChatMessage(
     throw new Error("Failed to get response from server");
   }
 
-  // Handle streaming response
   if (!response.body) {
     throw new Error("Response body is empty");
   }
@@ -78,13 +77,16 @@ export async function sendChatMessage(
       const chunk = decoder.decode(value, { stream: true });
       fullText += chunk;
 
-      // Call the onChunk callback if provided
       if (onChunk) {
         onChunk(chunk);
       }
     }
   } finally {
     reader.releaseLock();
+  }
+
+  if (fullText.length === 0) {
+    return await sendChatMessage(text, onChunk);
   }
 
   return fullText || "No response received";
