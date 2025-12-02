@@ -1,13 +1,14 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import type { Env } from "./types/Env";
-import type { Message } from "./types/message";
-import { chat } from "./llm/groq_client";
-import { ConversationDurableObject } from "./durable_objects/ConversationDurableObject";
-import { addMessageToConversation } from "./utils/conversation";
-import { logger } from "./utils/logger";
-import { limiter } from "./utils/rateLimiter";
 import { DurableObjectRateLimiter } from "@hono-rate-limiter/cloudflare";
+
+import type { Env, Message } from "./types";
+import { chat } from "./llm";
+import {
+  ConversationDurableObject,
+  addMessageToConversation,
+} from "./durable_objects";
+import { logger, limiter } from "./utils";
 
 const app = new Hono<{ Bindings: Env }>();
 

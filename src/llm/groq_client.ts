@@ -1,11 +1,9 @@
 import { createGroq } from "@ai-sdk/groq";
 import { streamText, stepCountIs } from "ai";
-import { Message } from "../types/message";
-import { logger } from "../utils/logger";
-import type { Env } from "../types/Env";
-import { WEATHER_PROMPT } from "../utils/system_prompts";
-import { weatherTool } from "../utils/tools";
-import { getCurrentDateString } from "../utils/date";
+import { Message, Env } from "../types";
+import { logger, getCurrentDateString } from "../utils";
+import { WEATHER_PROMPT } from "./system_prompts";
+import { geocodeTool, forecastTool } from "../tools";
 
 export const createGroqClient = (env: Env) => {
   return createGroq({
@@ -28,7 +26,8 @@ export const chat = async (message_history: Message[], env: Env) => {
       model: groq("llama-3.3-70b-versatile"),
       messages: messages_prompt,
       tools: {
-        weatherTool: weatherTool(env),
+        geocodeTool: geocodeTool(env),
+        forecastTool: forecastTool(env),
       },
       stopWhen: stepCountIs(5),
     });

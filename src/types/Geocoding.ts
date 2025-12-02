@@ -1,11 +1,11 @@
 export interface GeocodingResult {
+  id: number;
   name: string;
+  region: string;
   country: string;
-  latitude: number;
-  longitude: number;
-  timezone: string;
+  lat: number;
+  lon: number;
+  url: string;
 }
 
-export interface GeocodingResponse {
-  results?: GeocodingResult[];
-}
+export type GeocodingResponse = GeocodingResult[];

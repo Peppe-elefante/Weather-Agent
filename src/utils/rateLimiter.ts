@@ -1,7 +1,7 @@
 import { DurableObjectStore } from "@hono-rate-limiter/cloudflare";
 import { rateLimiter } from "hono-rate-limiter";
 import type { Context, Next } from "hono";
-import type { Env } from "../types/Env";
+import type { Env } from "../types";
 
 export const limiter = (c: Context<{ Bindings: Env }>, next: Next) =>
   rateLimiter<{ Bindings: Env }>({
